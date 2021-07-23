@@ -30,8 +30,8 @@ Bravo!
 
 ## 資料夾說明
 
-- slide_ori: 視訊會議的畫面截圖，不同議程做檔案夾分類。
-- slide_fix: 經過 code 的操作後，裁切好的畫面。
+- slide_ori: put your snapshot here. you can even put different sessions in separate folders 視訊會議的畫面截圖，不同議程做檔案夾分類。
+- slide_fix: after process, the capture will save here and auto create the same structure like `slide_ori` folder。
 
 ---
 
