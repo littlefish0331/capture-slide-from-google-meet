@@ -1,5 +1,7 @@
 # README
 
+[[English version]](./README.md)
+
 WFH 參加線上會議時，不論是 Google Meet 或是其他的會議軟體，  
 有時想做筆記，但苦無簡報!! 
 這時候你可能會想要截圖，但是節圖會充滿很多 ~~多餘的~~ 資訊。
@@ -24,7 +26,7 @@ WFH 參加線上會議時，不論是 Google Meet 或是其他的會議軟體，
 ![capture-result](./slide_fix/test/capture-result.png)
 
 舒服XD~  
-你也可以閱讀這個[網頁](./code/main.html)，知道處理的過程。
+你也可以閱讀/下載這個[網頁](./code/main.html)，知道處理的過程。
 
 ---
 

@@ -1,6 +1,6 @@
 # README
 
-[chinese](./README-cht.md)
+[[Chinese version]](./README-cht.md)
 
 You may want to make some note for online meeting when WFH.  
 However, you lack of slide and so you just snapshot the screen.  
@@ -28,7 +28,7 @@ capture image
 ![capture-result](./slide_fix/test/capture-result.png)
 
 Bravo!  
-You can read this [webpage](./code/main.html) to get familiar with how it achieves.
+You can read/download this [webpage](./code/main.html) to get familiar with how it achieves.
 
 ---
 
