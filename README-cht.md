@@ -8,6 +8,26 @@ WFH 參加線上會議時，不論是 Google Meet 或是其他的會議軟體，
 
 ---
 
+## 效果
+
+原始畫面
+
+![snapshot](./slide_ori/test/snapshot.png)
+
+測量你要擷取的區域
+
+![img_01](./img-explain/img_01.png)  
+![img_02](./img-explain/img_02.png)
+
+擷取結果
+
+![capture-result](./slide_fix/test/capture-result.png)
+
+舒服XD~  
+你也可以閱讀這個[網頁](./code/main.html)，知道處理的過程。
+
+---
+
 ## 資料夾說明
 
 - slide_ori: 視訊會議的畫面截圖，不同議程做檔案夾分類。

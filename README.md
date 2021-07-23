@@ -1,11 +1,14 @@
 # README
 
+[chinese](./README-cht.md)
+
 You may want to make some note for online meeting when WFH.  
-However, you lack of slide and so you snapshot the screen.  
-But you find there are so many redundant infomation on thesnapshot.
+However, you lack of slide and so you just snapshot the screen.  
+
+**But you find there are so many redundant infomation on thesnapshot.**
 
 Yep! this repo can help you to capture the section that you want.
-After that you can make a slide or note from those capture image
+After that you can make a slide or take a note from those capture image!
 
 ---
 
@@ -24,13 +27,14 @@ capture image
 
 ![capture-result](./slide_fix/test/capture-result.png)
 
-Bravo!
+Bravo!  
+You can read this [webpage](./code/main.html) to get familiar with how it achieves.
 
 ---
 
-## 資料夾說明
+## Folder
 
-- slide_ori: put your snapshot here. you can even put different sessions in separate folders 視訊會議的畫面截圖，不同議程做檔案夾分類。
+- slide_ori: put your snapshot here. you can even put different sessions in separate folders
 - slide_fix: after process, the capture will save here and auto create the same structure like `slide_ori` folder。
 
 ---
