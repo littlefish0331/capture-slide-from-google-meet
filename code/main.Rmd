@@ -1,0 +1,187 @@
+---
+title: "capture-slide-from-google-meet in R"
+author: "Author: [You-Jun Yu](https://github.com/littlefish0331)"
+date: "`r Sys.setlocale('LC_TIME', 'English'); format(Sys.time(), '%Y %b %d %a, %H:%M:%S')`"
+output:
+  rmdformats::readthedown:
+    css: style.css
+    self_contained: TRUE
+    thumbnails: FALSE
+    lightbox: TRUE
+    gallery: FALSE
+    highlight: tango #探戈橘
+    code_folding: show
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+rm(list = ls()); invisible(gc())
+library(knitr)
+library(dplyr)
+library(data.table)
+library(magick)
+library(rlist)
+library(gtools)
+library(tools)
+opts_chunk$set(
+    # 這邊是針對所有chunk的設定
+    echo = TRUE,
+    message = FALSE,
+    warning = FALSE
+)
+# source("")
+```
+
+---
+
+# File Target
+
+- 使用 R::magick 套件，將 `slide_ori/` 資料夾的圖片(Google Meet 截圖)畫面做切割。
+
+**先備條件:**
+
+- 預設的畫面切割是「Google Meet 的版面配置為側攔」
+- 處理好的資料會放到 `slide_capture/` 資料夾。
+
+---
+
+## Main Function I used in magick
+
+### read image
+
+```{r}
+img_all <- list.files("../slide_ori/test/", full.names = T)
+# print(img_all[1])
+img <- image_read(img_all[1])
+```
+
+### print image
+
+```{r}
+print(img)
+img_info <- image_info(img)
+# img_info$width
+# img_info$height
+```
+
+### cut image
+
+~~至於要擷取的長寬多少，起點要從哪邊開始算，真的只能手動去慢慢測試Orz~~  
+
+屁啦!! 要工程師慢慢用去嘗試，根本要了我的命。  
+簡單作法，可以打開 pptx，然後用圖形(記得將框線去除)，  
+然後測量兩個地方的矩形大小，再加上自己截圖的解析度大小。
+
+- 從左上角到要擷取區塊的左上角: 寬x1, 長y1
+- 從左上角到要擷取區塊的右下角: 寬x2, 長y2
+- image's resolution: 1920 x 1080
+
+--
+
+$$
+1\ px=\frac{96\times\ cm}{2.54}
+$$
+
+
+--
+
+接著計算數學，因為 pptx 的預設大小為: 33.87x19.05。  
+所以最後的字串如下:
+{$\frac{x1}{33.87}\times 1920$} x {$\frac{y1}{19.05}\times 1080$} + {$\frac{x2-x1}{33.87}\times 1920$} + {$\frac{y2-y1}{19.05}\times 1080$}
+
+--
+
+阿~ 你說我不想算，好啦工程師都幫你寫好，你只需要測量 x1, y1, x2, y2 四個數據就好。
+
+```{r}
+x1 <- 1.54
+y1 <- 4.37
+x2 <- 26.19
+y2 <- 16.24
+str_geo <- paste0((x2-x1)/33.87*img_info$width, "x", 
+                  (y2-y1)/19.05*img_info$height, "+", 
+                  (x1)/33.87*img_info$width, "+", 
+                  (y1)/19.05*img_info$height)
+img_fix <- image_crop(image = img, geometry = str_geo)
+```
+
+this is what you do in Powerpoint
+
+![](../img-explain/img_01.png)
+![](../img-explain/img_02.png)
+
+--
+
+### save image
+
+```{r}
+image_write(image = img_fix, path = "../slide_fix/test/capture-result.png")
+print(img_fix)
+```
+
+---
+
+## 流程
+
+- 讀取 `slide_ori/` 中，資料夾中的所有圖片。
+- 放到一個 list 中。(事先要確保其順序正確)
+- 圖片切割
+- 按照 list 中的數量，存放到 slide_fix/。
+- 命名方式: img_01, img_02 ...。依照圖片的數量，決定後方數字的位數。
+
+```{r eval = FALSE}
+rm(list = ls()); invisible(gc())
+
+gen_geo <- function(img, x1, y1, x2, y2){
+    img_info <- image_info(img)
+    res <- paste0((x2-x1)/33.87*img_info$width, "x", 
+                  (y2-y1)/19.05*img_info$height, "+", 
+                  (x1)/33.87*img_info$width, "+", 
+                  (y1)/19.05*img_info$height)
+    return(res)
+}
+
+gen_img.name <- function(path_img_all, path_dir_fix){
+      img_num <- length(path_img_all)
+      num_digit <- img_num %>% nchar()
+      tmp <- paste("img", formatC(1:img_num, width = num_digit, flag = "0"), sep = "_")
+      img_ext <- file_ext(path_img_all) %>% tolower()
+      img_nn <- paste0(path_dir_fix, "/", tmp, ".", img_ext)
+      return(img_nn)
+}
+
+
+path_dir_ori <- list.dirs(path = "../slide_ori")[-1]
+for (i_dir in 1:length(path_dir_ori)) {
+  img_all <- list()
+  
+  
+  # meta info
+  x1 <- 1.33; y1 <- 3.06
+  x2 <- 27.28; y2 <- 17.68
+  
+  
+  # read and cut image
+  path_img_all <- list.files(path_dir_ori[i_dir], full.names = T) %>% mixedsort()
+  for (i_img in 1:length(path_img_all)) {
+    img <- image_read(path_img_all[i_img])
+    img_fix <- image_crop(image = img, geometry = gen_geo(img, x1, y1, x2, y2))
+    img_all <- list.append(img_all, img_fix)
+  }
+  
+  # save image
+  path_img_all_fix <- path_img_all %>% gsub("slide_ori", "slide_fix", .)
+  path_dir_fix <- path_img_all_fix[1] %>% dirname()
+  if (!dir.exists(path_dir_fix)) dir.create(path = path_dir_fix, recursive = T)
+  img_nn <- gen_img.name(path_img_all, path_dir_fix)
+  for (i_img in 1:length(path_img_all)) {
+    image_write(image = img_all[[i_img]], path = img_nn[i_img])
+  }
+}
+
+
+```
+
+---
+
+## END
