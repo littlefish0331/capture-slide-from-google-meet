@@ -40,3 +40,10 @@ You can read/download this [webpage](./code/main.html) to get familiar with how 
 ---
 
 ## END
+
+---
+
+## TO DO LIST
+
+- build a website or API to make most use of this tool.
+- Need a more intuitive method to measure the length and width of the section you want to capture.
