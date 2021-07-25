@@ -1,6 +1,6 @@
 # README
 
-[[Chinese version]](./README-cht.md)
+[[ Chinese version ]](./README-cht.md)
 
 You may want to make some note for online meeting when WFH.  
 However, you lack of slide and so you just snapshot the screen.  

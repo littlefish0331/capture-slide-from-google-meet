@@ -1,6 +1,6 @@
 # README
 
-[[English version]](./README.md)
+[[ English version ]](./README.md)
 
 WFH 參加線上會議時，不論是 Google Meet 或是其他的會議軟體，  
 有時想做筆記，但苦無簡報!! 
