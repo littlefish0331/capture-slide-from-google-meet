@@ -1,3 +1,0 @@
-"0","img_all <- list.files(""../slide_ori/test/"", full.names = T)"
-"0","# print(img_all[1])"
-"0","img <- image_read(img_all[1])"

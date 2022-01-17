@@ -45,5 +45,9 @@ You can read/download this [webpage](./code/main.html) to get familiar with how 
 
 ## TO DO LIST
 
+- serverless structure
+- coding for PDF to High Quality PNG
+  - https://hnet.com/pdf-to-png/
+  - https://stackoverflow.com/questions/6605006/convert-pdf-to-image-with-high-resolution
 - build a website or API to make most use of this tool.
 - Need a more intuitive method to measure the length and width of the section you want to capture.

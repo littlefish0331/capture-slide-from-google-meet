@@ -74,18 +74,19 @@ img_info <- image_info(img)
 
 - 從左上角到要擷取區塊的左上角: 寬x1, 長y1
 - 從左上角到要擷取區塊的右下角: 寬x2, 長y2
-- image's resolution: 1920 x 1080
+- ex: image's resolution: 1920 x 1080
 
 --
 
 $$
-1\ px=\frac{96\times\ cm}{2.54}
+1\ px=\frac{96\times\ cm}{2.54}, 1\ cm=\frac{2.54\times\ px}{96}
 $$
 
+[pixel-to-centimeter](https://stackoverflow.com/questions/1341930/pixel-to-centimeter)
 
 --
 
-接著計算數學，因為 pptx 的預設大小為: 33.87x19.05。  
+接著計算數學，因為 pptx 的預設大小為: 33.87x19.05 cm。  
 所以最後的字串如下:
 {$\frac{x1}{33.87}\times 1920$} x {$\frac{y1}{19.05}\times 1080$} + {$\frac{x2-x1}{33.87}\times 1920$} + {$\frac{y2-y1}{19.05}\times 1080$}
 
@@ -141,6 +142,7 @@ gen_geo <- function(img, x1, y1, x2, y2){
     return(res)
 }
 
+
 gen_img.name <- function(path_img_all, path_dir_fix){
       img_num <- length(path_img_all)
       num_digit <- img_num %>% nchar()
@@ -179,8 +181,120 @@ for (i_dir in 1:length(path_dir_ori)) {
   }
 }
 
-
 ```
+
+--
+
+沒辦法依次讀進來處理，只好一張一張處理。  
+for A4 大小的 Google APAC 訓練。
+
+```{r}
+rm(list = ls()); invisible(gc())
+
+gen_geo <- function(img, x1, y1, x2, y2){
+    img_info <- image_info(img)
+    res <- paste0((x2-x1)/19.05*img_info$width, "x", 
+                  (y2-y1)/25.4*img_info$height, "+", 
+                  (x1)/19.05*img_info$width, "+", 
+                  (y1)/25.4*img_info$height)
+    return(res)
+}
+
+
+gen_img.name <- function(path_img_all, path_dir_fix){
+      img_num <- length(path_img_all)
+      num_digit <- img_num %>% nchar()
+      tmp <- paste("img", formatC(1:img_num, width = num_digit, flag = "0"), sep = "_")
+      img_ext <- file_ext(path_img_all) %>% tolower()
+      img_nn <- paste0(path_dir_fix, "/", tmp, ".", img_ext)
+      return(img_nn)
+}
+
+
+path_dir_ori <- list.dirs(path = "../slide_ori")[-1]
+for (i_dir in 1:length(path_dir_ori)) {
+  
+  # meta info
+  x1 <- 1.05; y1 <- 1.89
+  x2 <- 18; y2 <- 11.44
+  
+  
+  # read and cut image
+  # save image
+  path_img_all <- list.files(path_dir_ori[i_dir], full.names = T)
+  path_img_all_fix <- path_img_all %>% gsub("slide_ori", "slide_fix", .)
+  path_dir_fix <- path_img_all_fix[1] %>% dirname()
+  if (!dir.exists(path_dir_fix)) dir.create(path = path_dir_fix, recursive = T)
+  img_nn <- gen_img.name(path_img_all, path_dir_fix)
+  
+  for (i_img in 1:length(path_img_all)) {
+    print(i_img)
+    img <- image_read(path_img_all[i_img])
+    img_fix <- image_crop(image = img, geometry = gen_geo(img, x1, y1, x2, y2))
+    image_write(image = img_fix, path = img_nn[i_img])
+  }
+}
+```
+
+--
+
+沒辦法依次讀進來處理，只好一張一張處理。  
+Google for Education。
+
+```{r}
+rm(list = ls()); invisible(gc())
+
+gen_geo <- function(img, x1, y1, x2, y2){
+    img_info <- image_info(img)
+    res <- paste0((x2-x1)/33.87*img_info$width, "x", 
+                  (y2-y1)/19.05*img_info$height, "+", 
+                  (x1)/33.87*img_info$width, "+", 
+                  (y1)/19.05*img_info$height)
+    return(res)
+}
+
+
+gen_img.name <- function(path_img_all, path_dir_fix){
+      img_num <- length(path_img_all)
+      num_digit <- img_num %>% nchar()
+      tmp <- paste("img", formatC(1:img_num, width = num_digit, flag = "0"), sep = "_")
+      img_ext <- file_ext(path_img_all) %>% tolower()
+      img_nn <- paste0(path_dir_fix, "/", tmp, ".", img_ext)
+      return(img_nn)
+}
+
+
+path_dir_ori <- list.dirs(path = "../slide_ori")[-1]
+for (i_dir in 1:length(path_dir_ori)) {
+  
+  # meta info
+  x1 <- 8.68; y1 <- 3.24
+  x2 <- 32.53; y2 <- 17.73
+  
+  
+  # read image and sort by create time
+  path_img_all <- list.files(path_dir_ori[i_dir], full.names = T)
+  tmp <- path_img_all %>% file.info()
+  tmp01 <- data.table(file_name = row.names(tmp), tmp)
+  path_img_all <- tmp01[order(mtime), file_name]
+  
+  # cut image
+  # save image
+  path_img_all_fix <- path_img_all %>% gsub("slide_ori", "slide_fix", .)
+  path_dir_fix <- path_img_all_fix[1] %>% dirname()
+  if (!dir.exists(path_dir_fix)) dir.create(path = path_dir_fix, recursive = T)
+  img_nn <- gen_img.name(path_img_all, path_dir_fix)
+  
+  for (i_img in 1:length(path_img_all)) {
+    print(i_img)
+    img <- image_read(path_img_all[i_img])
+    img_fix <- image_crop(image = img, geometry = gen_geo(img, x1, y1, x2, y2))
+    image_write(image = img_fix, path = img_nn[i_img])
+  }
+}
+```
+
+
 
 ---
 
